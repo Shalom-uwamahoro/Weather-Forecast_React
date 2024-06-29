@@ -1,4 +1,3 @@
-// src/components/Search.js
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { TextField, Button, Container } from '@mui/material';
@@ -14,7 +13,7 @@ const Search = () => {
   };
 
   return (
-    <Container>
+    <Container className='welcome'>
       <TextField
         label="Enter city name"
         variant="outlined"

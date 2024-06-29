@@ -1,7 +1,5 @@
-// src/components/Weather.js
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import axios from 'axios';
 import { Container, Typography, CircularProgress, Grid, Box, Card, CardContent, CardMedia, Avatar } from '@mui/material';
 import WbSunnyIcon from '@mui/icons-material/WbSunny';
 import Brightness2Icon from '@mui/icons-material/Brightness2';
@@ -12,71 +10,65 @@ const API_KEY = process.env.REACT_APP_API_KEY;
 const BASE_URL = process.env.REACT_APP_BASE_URL;
 
 const Weather = () => {
-  const { location } = useParams();
+  const { location = "Nairobi"} = useParams();
   const [currentWeather, setCurrentWeather] = useState(null);
   const [weeklyWeather, setWeeklyWeather] = useState([]);
   const [monthlyRainfall, setMonthlyRainfall] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  useEffect(() => {
-    if (!location) return;
 
+  useEffect(() => {
     const fetchWeather = async () => {
       try {
-        const currentResponse = await axios.get(`${BASE_URL}/current.json`, {
-          params: {
-            q: location,
-            lang: 'en',
-            key: API_KEY
-          }
-        });
-
-        const forecastResponse = await axios.get(`${BASE_URL}/forecast.json`, {
-          params: {
-            q: location,
-            days: 7,
-            lang: 'en',
-            key: API_KEY
-          }
-        });
-
-        if (currentResponse.data) {
-          setCurrentWeather(currentResponse.data);
+        const currentResponse = await fetch(`${BASE_URL}/current.json?q=${location}&lang=en&key=${API_KEY}`);
+        const currentData = await currentResponse.json();
+        
+        const forecastResponse = await fetch(`${BASE_URL}/forecast.json?q=${location}&days=7&lang=en&key=${API_KEY}`);
+        const forecastData = await forecastResponse.json();
+  
+        if (currentData) {
+          setCurrentWeather(currentData);
         } else {
           throw new Error('Current weather data is unavailable');
-        }
-
-        if (forecastResponse.data && forecastResponse.data.forecast && forecastResponse.data.forecast.forecastday) {
-          setWeeklyWeather(forecastResponse.data.forecast.forecastday);
-          const rainfall = forecastResponse.data.forecast.forecastday.reduce((total, day) => total + day.day.totalprecip_mm, 0);
-          setMonthlyRainfall(rainfall);
-        } else {
-          throw new Error('Forecast data is unavailable');
-        }
-      } catch (err) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
       }
-    };
 
+      if (forecastData && forecastData.forecast && forecastData.forecast.forecastday) {
+        setWeeklyWeather(forecastData.forecast.forecastday);
+        const rainfall = forecastData.forecast.forecastday.reduce((total, day) => total + day.day.totalprecip_mm, 0);
+        setMonthlyRainfall(rainfall);
+      } else {
+        throw new Error('Forecast data is unavailable');
+      }
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (location) {
     fetchWeather();
-  }, [location]);
+  }
+}, [location]);
+
+
+
+
 
   const getDayName = (dateStr) => {
     const date = new Date(dateStr);
     return date.toLocaleDateString('en-US', { weekday: 'long' });
   };
 
-  if (!location) return <Typography>Enter a location to see the weather</Typography>;
+  if (!location) return <Typography variant='h1'>Enter a location to see the weather</Typography>;
 
   if (loading) return <CircularProgress />;
   if (error) return <Typography color="error">Error: {error}</Typography>;
   if (!currentWeather) return <Typography>No data available for the specified location</Typography>;
 
   return (
-    <Container>
+    <Container >
       <Typography variant="h4" gutterBottom>Weather in {currentWeather.location.name}, {currentWeather.location.country}</Typography>
       <Box>
         <Typography variant="h6">{currentWeather.current.condition.text}</Typography>

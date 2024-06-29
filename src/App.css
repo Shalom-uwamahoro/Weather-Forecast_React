@@ -1,4 +1,6 @@
-/* src/App.css */
+body{
+  margin: 0;
+}
 .App {
   text-align: center;
   background: linear-gradient(to right, #6a11cb, #2575fc);
@@ -20,16 +22,20 @@ main {
   padding: 20px;
 }
 
-  .MuiContainer-root {
-    background-color: rgba(255, 255, 255, 0.8);
-    padding: 10px;
-    margin-top: 10px;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    color: black;
-  }
+.MuiContainer-root {
+  background-color: rgba(255, 255, 255, 0.8);
+  padding: 10px;
+  margin-top: 10px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  color: black;
+}
 
-  .MuiCard-root {
-    background-color: rgba(255, 255, 255, 0.9);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  }
+.MuiCard-root {
+  background-color: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.welcome {
+  margin-bottom: 100px;
+}
